@@ -21,8 +21,7 @@ class MicroBlogger
     screen_names = @client.followers.collect do |follower|
       @client.user(follower).screen_name
     end
-    puts "Trying to send #{target} this direct message:"
-    puts message
+    puts "Trying to send #{target} this direct message: #{message}"
     direct_message = "d @#{target} #{message}"
     if screen_names.include?(target)
       tweet(direct_message)
@@ -36,7 +35,7 @@ class MicroBlogger
     friends.sort_by!(&:downcase)
     friends.each do |friend|
       status = @client.user(friend).status
-      date = @client.user(friend).status.created_at.strftime("%A, %b %d %Y")
+      date = status.created_at.strftime('%A, %b %d %Y')
       puts "#{friend} said this on #{date}..."
       puts status.text
       puts
@@ -51,14 +50,18 @@ class MicroBlogger
       input = gets.chomp
       parts = input.split(' ')
       command = parts[0]
-      case command
-      when 'q' then puts 'Exiting program...'
-      when 't' then tweet(parts[1..-1].join(' '))
-      when 'dm' then dm(parts[1], parts[2..-1].join(' '))
-      when 'elt' then friends_last_tweet
-      else
-        puts "Command #{command} does not exist."
-      end
+      display_menu(command)
+    end
+  end
+
+  def display_menu(command)
+    case command
+    when 'q' then puts 'Exiting program...'
+    when 't' then tweet(parts[1..-1].join(' '))
+    when 'dm' then dm(parts[1], parts[2..-1].join(' '))
+    when 'elt' then friends_last_tweet
+    else
+      puts "Command #{command} does not exist."
     end
   end
 end
